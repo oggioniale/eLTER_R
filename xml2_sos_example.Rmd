@@ -1,0 +1,73 @@
+---
+title: "How to generate QR Code by qrencoder package"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    theme: flatly
+author: "Alessandro Oggioni - 27 April 2019"
+---
+
+##Introduction
+...
+
+##Connection to SOS v2.0.0 with xml2 package
+...
+```{r}
+library("xml2")
+library(tidyr)
+library(leaflet)
+library(mapview)
+library(raster)
+library(sp)
+library(sf)
+library("stringr")
+library("tsibble")
+library("xts")
+library("tsbox")
+library("plotly")
+OMfile <- read_xml("http://sk.ise.cnr.it/observations/sos/kvp?service=SOS&version=2.0.0&request=GetObservation&offering=offering:http://sp7.irea.cnr.it/sensors/sk.ise.cnr.it/procedure/SAFAS/SAFAS-UVmc2/noSerialNumberDeclared/2015042820079863/observations&observedProperty=http://vocab.nerc.ac.uk/collection/P01/current/MDMAP004/&procedure=http://sp7.irea.cnr.it/sensors/sk.ise.cnr.it/procedure/SAFAS/SAFAS-UVmc2/noSerialNumberDeclared/2015042820079863&featureOfInterest=http://sp7.irea.cnr.it/sensors/sk.ise.cnr.it/foi/SSF/SP/EPSG:4326/46.17583/8.19111&MergeObservationsIntoDataArray=true")
+type <- xml_attr(xml_find_all(OMfile, ".//om:type"), "href")
+procedure <- xml_attr(xml_find_all(OMfile, ".//om:procedure"), "href")
+observedProperty <- xml_attr(xml_find_all(OMfile, ".//om:observedProperty"), "href")
+foi <- xml_attr(xml_find_all(OMfile, ".//om:featureOfInterest"), "href")
+foiTitle <- xml_attr(xml_find_all(OMfile, ".//om:featureOfInterest"), "title")
+uom <- xml_attr(xml_find_all(OMfile, ".//ns:uom"), "code")
+values <- xml_find_all(OMfile, ".//ns:values/text()")
+numValues <- xml_find_all(OMfile, ".//ns:Count/ns:value/text()")
+
+v <- strsplit(as.character(values), ";")
+m <- matrix(unlist(v), nrow = as.numeric(as.character(numValues)), byrow=FALSE)
+d <- as.data.frame(m)
+a <- as.data.frame(str_split_fixed(d$V1, ",", 2))
+colnames(a) <- c('time', 'results')
+a$results <- as.double(a$results)
+ts_tsibble(a)
+```
+
+
+##Plot
+...
+```{r}
+plot_ly(data = a, x = ~time, y = ~results, type = "scatter", mode = "lines", name = 'precipitation measure') %>%
+  layout(
+    xaxis = list(
+      title = ""
+    ),
+    yaxis = list(
+      title = 'precipitation measure (mm)'
+    ),
+    legend = list(
+      x = 0.9,
+      y = 0.9,
+      bgcolor = "#FFF",
+      bordercolor = "#000",
+      borderwidth = 1
+    ),
+    showlegend = TRUE)
+```
+
+## Credits
+This code is being developed by Alessandro Oggioni <a href="https://orcid.org/0000-0002-7997-219X" target="_blank"><img src="http://www.get-it.it/assets/img/loghi/orcid.png" height="20" width="20" alt="ORCID"/></a> ([IREA-CNR](http://www.irea.cnr.it)),
+and it is released under the [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0.html) (GPL‑3).
