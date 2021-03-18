@@ -290,6 +290,7 @@ library("tsbox")
 library("plotly")
 # install.packages("timeSeries")
 library("timeSeries")
+library("xml2")
 
 # FOI
 lterItalyGetFOI <- read_xml("http://getit.lteritalia.it/observations/service?service=SOS&version=2.0.0&request=GetFeatureOfInterest&procedure=http://www.get-it.it/sensors/getit.lteritalia.it/procedure/noOwnerDeclared/noModelDeclared/noSerialNumberDeclared/1286194C-A5DF-11DF-8ED7-1602DFD72084")
@@ -318,8 +319,8 @@ leaflet() %>%
   addHomeButton(ext = extent(sites), layer.name = "SOS Sites")
 
 # Obs
-lterItalyGetObs <- read_xml("http://getit.lteritalia.it/observations/service?service=SOS&version=2.0.0&request=GetObservation&observedProperty=http://vocabs.lter-europe.net/EnvThes/20166")
-obsProp <- xml_attr(xml_find_first(lterItalyGetObs, ".//om:observedProperty"), "href")
+lterItalyGetObs <- xml2::read_xml("http://getit.lteritalia.it/observations/service?service=SOS&version=2.0.0&request=GetObservation&observedProperty=http://vocabs.lter-europe.net/EnvThes/20166")
+obsProp <- xml2::xml_attr(xml2::xml_find_first(lterItalyGetObs, ".//om:observedProperty"), "href")
 obsPropLab <- xml_attr(xml_find_first(lterItalyGetObs, ".//om:observedProperty"), "title")
 uomFirst <- xml_attr(xml_find_first(lterItalyGetObs, ".//swe:Quantity/swe:uom"), "code")
 valuesAll <- xml_find_all(lterItalyGetObs, ".//swe:values/text()")

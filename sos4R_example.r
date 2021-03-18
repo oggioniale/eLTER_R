@@ -1,6 +1,5 @@
 #devtools::install_github("nuest/sos4R", ref = "dev", force = TRUE)
 #devtools::install_github("nuest/sos4R", ref = "bbea3e182538e9a748480ed4ede9fa87a65f350b", force = TRUE)
-
 library("sos4R")
 library("ggplot2")
 library("plotly")
@@ -10,8 +9,7 @@ library("tsibble")
 ######
 # Connection to SOS v2.0.0 with sos4R package
 ######
-
-CEH <- sos4R::SOS("http://192.171.139.63/observations/service", 
+GETIT_LTERItaly <- sos4R::SOS("http://getit.lteritalia.it/observations/service", 
                   binding = "KVP",
                   version = "2.0.0"
                   # dataFieldConverters = myConverters
@@ -19,19 +17,19 @@ CEH <- sos4R::SOS("http://192.171.139.63/observations/service",
 )
 
 # List of offering
-sos4R::sosOfferings(CEH)
+sos4R::sosOfferings(GETIT_LTERItaly)
 
-myOff <- sos4R::sosOfferings(CEH)[['/ECN/T04/RAIN/2/raw/']]
+myOff <- sos4R::sosOfferings(GETIT_LTERItaly)[['offering:http://www.get-it.it/sensors/getit.lteritalia.it/procedure/noOwnerDeclared/noModelDeclared/noSerialNumberDeclared/1286194C-A5DF-11DF-8ED7-1602DFD72084/observations']]
 
-myTemporalFilter <- sos4R::sosCreateEventTimeList(sosCreateTimePeriod(sos = CEH,
-                                                                      begin = as.POSIXct("1992-01-01"), #* 180),
-                                                                      end = as.POSIXct("1992-01-10")))
+myTemporalFilter <- sos4R::sosCreateEventTimeList(sos4R::sosCreateTimePeriod(sos = GETIT_LTERItaly,
+                                                                      begin = as.POSIXct("2005-05-31"), #* 180),
+                                                                      end = as.POSIXct("2008-01-31")))
 
-jan1992 <- sos4R::getObservation(sos = CEH, 
-                                 responseFormat = "http://www.opengis.net/om/2.0", 
+jan1992 <- sos4R::getObservation(sos = GETIT_LTERItaly, 
+                                 #responseFormat = "http://www.opengis.net/om/2.0", 
                                  offering = myOff, 
-                                 verbose = TRUE,
-                                 observedProperty = list("http://vocabs.lter-europe.net/EnvThes/USLterCV_443"),
+                                 # verbose = TRUE,
+                                 # observedProperty = list("http://vocabs.lter-europe.net/EnvThes/20166"),
                                  eventTime = myTemporalFilter)
 
 a <- do.call(rbind, lapply(jan1992, function(obj) {

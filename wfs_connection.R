@@ -33,15 +33,15 @@ p <- leaflet() %>%
           offset.y = 10,
           width = 100,
           height = 50) %>%
-  addCircleMarkers(data = allSites,
+  addCircleMarkers(data = itSites,
                    clusterOptions = markerClusterOptions(),
                    popup = paste0(
-                     "Name: <b>", allSites$name, "</b><br>",
-                     "UUID: ", allSites$deimsid, "<br>",
-                     "<a href=\"", allSites$deimsid, "\" target=\"_blank\">DEIMS-SDR record</a>"
+                     "Name: <b>", itSites$name, "</b><br>",
+                     "UUID: ", itSites$deimsid, "<br>",
+                     "<a href=\"", itSites$deimsid, "\" target=\"_blank\">DEIMS-SDR record</a>"
                    )
   ) %>% 
-  addHomeButton(ext = extent(allSites), layer.name = "DEIMS-SDR LTER-Italy Sites")
+  addHomeButton(ext = extent(itSites), layer.name = "DEIMS-SDR LTER-Italy Sites")
 
 p
 

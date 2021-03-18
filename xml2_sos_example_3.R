@@ -40,12 +40,12 @@ sites <- data.frame(siteName, siteCoords)
 
 coordinates(sites) <- cbind(as.numeric(sites$long) , as.numeric(sites$lat))
 crs(sites) <- "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs"
-map <- leaflet() %>%
-  addTiles() %>%
-  addMouseCoordinates() %>%
-  addCircleMarkers(data = sites,
-                   popup = paste0("Name: <b>", sites$names)) %>%
-  addHomeButton(ext = extent(sites), layer.name = "SOS Sites")
+map <- leaflet::leaflet() %>%
+  leaflet::addTiles() %>%
+  leafem::addMouseCoordinates() %>%
+  leaflet:addCircleMarkers(data = sites,
+                   popup = paste0("Name: <b>", sites$names)) #%>%
+  # addHomeButton(ext = extent(sites), layer.name = "SOS Sites")
 
 map
 
